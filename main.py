@@ -17,14 +17,28 @@ enemy_image = pg.image.load('assets/images/enemies/enemy_1.png').convert_alpha()
 
 #creat group
 enemy_group = pg.sprite.Group()
-enemy_1 = Enemy((200,300),enemy_image)
-enemy_group.add(enemy_1)
+
+waypoints = [
+    (100,100),
+    (400,200),
+    (400,100),
+    (200,300)
+]
+
+enemy = Enemy(waypoints,enemy_image)
+enemy_group.add(enemy)
+
+
 
 
 run = True
 while run:
     clock.tick(c.FPS)
     screen.fill('grey100')
+
+    #draw enemy path
+    pg.draw.lines(screen,'grey0', False, waypoints)
+
 
 
     #update groups
