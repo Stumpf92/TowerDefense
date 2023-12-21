@@ -5,8 +5,6 @@ from world import World
 from enemy import Enemy
 from turret import Turret
 
-#test
-
 pg.init()
 
 clock = pg.time.Clock()
