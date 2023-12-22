@@ -6,8 +6,6 @@ from enemy import Enemy
 from turret import Turret
 from button import Button
 
-
-#macmacmacmac
 pg.init()
 
 clock = pg.time.Clock()
