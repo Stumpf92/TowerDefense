@@ -24,9 +24,10 @@ placing_turrets = False
 #############
 #map
 map_image = pg.image.load('levels/level.png').convert_alpha()
-#individual image for mouse cursor
+
 #loading turret sheets
 turret_sheet = pg.image.load('assets/images/turrets/turret_1.png').convert_alpha()
+#individual image for mouse cursor
 cursor_turret = pg.image.load('assets/images/turrets/cursor_turret.png').convert_alpha()
 #enemies
 enemy_image = pg.image.load('assets/images/enemies/enemy_1.png').convert_alpha()
@@ -84,6 +85,7 @@ while run:
     #UPDATING SECTION
     #################
     enemy_group.update()
+    turret_group.update()
 
     ##################
     #DRAWING SECTION
