@@ -25,6 +25,8 @@ placing_turrets = False
 #map
 map_image = pg.image.load('levels/level.png').convert_alpha()
 #individual image for mouse cursor
+#loading turret sheets
+turret_sheet = pg.image.load('assets/images/turrets/turret_1.png').convert_alpha()
 cursor_turret = pg.image.load('assets/images/turrets/cursor_turret.png').convert_alpha()
 #enemies
 enemy_image = pg.image.load('assets/images/enemies/enemy_1.png').convert_alpha()
@@ -50,7 +52,7 @@ def create_turret(mouse_pos):
             if turret.tile_x == mouse_tile_x and turret.tile_y == mouse_tile_y:
                 space_is_free = False
         if space_is_free == True:
-            new_turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
+            new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
             turret_group.add(new_turret)
 
 
@@ -114,7 +116,7 @@ while run:
 
     
     for event in pg.event.get():
-        if event.type == pg.QUIT:
+        if event.type == pg.QUIT or pg.K_ESCAPE == True:
             run = False
         #mouseclick
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
