@@ -5,9 +5,10 @@ class Turret(pg.sprite.Sprite):
 
     def __init__ (self, sprite_sheet, tile_x, tile_y):
         pg.sprite.Sprite.__init__(self)
-
+        self.range = 90
         self.cooldown = 1500
         self.last_shot = pg.time.get_ticks()
+        self.selected = False
 
         ###position variables 
         self.tile_x = tile_x
@@ -27,6 +28,15 @@ class Turret(pg.sprite.Sprite):
         self.image = self.animation_list[self.frame_index]
         self.rect = self.image.get_rect()
         self.rect.center = (self.x,self.y)
+
+        #create transparent circle to visualize turret range
+        self.range_image = pg.Surface((self.range * 2, self.range * 2))
+        self.range_image.fill((0,0,0,))
+        self.range_image.set_colorkey((0,0,0))
+        pg.draw.circle(self.range_image, "grey100", (self.range,self.range), self.range)
+        self.range_image.set_alpha(100)
+        self.range_rect = self.range_image.get_rect()
+        self.range_rect.center = self.rect.center
 
 
     def load_images(self):
@@ -52,3 +62,8 @@ class Turret(pg.sprite.Sprite):
         if self.frame_index >= len(self.animation_list):
             self.frame_index = 0   
             self.last_shot = pg.time.get_ticks() 
+    
+    def draw(self,surface):
+        if self.selected == True:
+            surface.blit(self.range_image,self.range_rect)
+        surface.blit(self.image,self.rect)

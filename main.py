@@ -18,6 +18,7 @@ pg.display.set_caption('Tower Defense')
 ###############
 
 placing_turrets = False
+selected_turret = None
 
 #############
 #LOAD IMAGES
@@ -56,6 +57,18 @@ def create_turret(mouse_pos):
             new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
             turret_group.add(new_turret)
 
+def select_turret(mouse_pos):
+    mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
+    mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
+    for turret in turret_group:
+        if turret.tile_x == mouse_tile_x and turret.tile_y == mouse_tile_y:
+            return turret
+    
+def clear_selection():
+    for turret in turret_group:
+        turret.selected = False
+
+
 
 #creat world
 world = World(world_data,map_image)
@@ -87,6 +100,10 @@ while run:
     enemy_group.update()
     turret_group.update()
 
+    #highlight selected turret
+    if selected_turret:
+        selected_turret.selected = True
+
     ##################
     #DRAWING SECTION
     ##################
@@ -100,7 +117,8 @@ while run:
 
     #draw groups
     enemy_group.draw(screen)
-    turret_group.draw(screen)
+    for turret in turret_group:
+        turret.draw(screen)
 
     #draw buttons
     if turret_button.draw(screen):
@@ -118,15 +136,24 @@ while run:
 
     
     for event in pg.event.get():
-        if event.type == pg.QUIT or pg.K_ESCAPE == True:
+        if event.type == pg.QUIT :
             run = False
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                run = False
+                print("ESC QUIT")
         #mouseclick
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pg.mouse.get_pos()
             #check if mouse is on game area
             if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
+                # clear selection with click
+                selected_turret = None
+                clear_selection()
                 if placing_turrets == True:
                     create_turret(mouse_pos)
+                else:
+                    selected_turret = select_turret(mouse_pos)
             
 
 
