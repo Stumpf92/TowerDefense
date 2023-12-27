@@ -18,12 +18,19 @@ pg.display.set_caption('Tower Defense')
 ###############
 
 placing_turrets = False
+selected_turret = None
 
 #############
 #LOAD IMAGES
 #############
 #map
 map_image = pg.image.load('levels/level.png').convert_alpha()
+
+#loading turret sheets
+turret_spritesheets = []
+for x in range(1, c.TURRET_LEVELS + 1):
+    turret_sheet = pg.image.load(f'assets/images/turrets/turret_{x}.png').convert_alpha()
+    turret_spritesheets.append(turret_sheet)
 #individual image for mouse cursor
 cursor_turret = pg.image.load('assets/images/turrets/cursor_turret.png').convert_alpha()
 #enemies
@@ -31,6 +38,8 @@ enemy_image = pg.image.load('assets/images/enemies/enemy_1.png').convert_alpha()
 #buttons
 buy_turret_image= pg.image.load('assets/images/buttons/buy_turret.png').convert_alpha()
 cancel_image= pg.image.load('assets/images/buttons/cancel.png').convert_alpha()
+upgrade_turret_image= pg.image.load('assets/images/buttons/upgrade_turret.png').convert_alpha()
+
 
 #load json data for level
 with open('levels/level.tmj') as file:
@@ -50,8 +59,20 @@ def create_turret(mouse_pos):
             if turret.tile_x == mouse_tile_x and turret.tile_y == mouse_tile_y:
                 space_is_free = False
         if space_is_free == True:
-            new_turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
+            new_turret = Turret(turret_spritesheets, mouse_tile_x, mouse_tile_y)
             turret_group.add(new_turret)
+
+def select_turret(mouse_pos):
+    mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
+    mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
+    for turret in turret_group:
+        if turret.tile_x == mouse_tile_x and turret.tile_y == mouse_tile_y:
+            return turret
+    
+def clear_selection():
+    for turret in turret_group:
+        turret.selected = False
+
 
 
 #creat world
@@ -70,6 +91,7 @@ enemy_group.add(enemy)
 #creat buttons
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
+upgrade_turret_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
 
 
 
@@ -82,6 +104,11 @@ while run:
     #UPDATING SECTION
     #################
     enemy_group.update()
+    turret_group.update(enemy_group)
+
+    #highlight selected turret
+    if selected_turret:
+        selected_turret.selected = True
 
     ##################
     #DRAWING SECTION
@@ -96,7 +123,8 @@ while run:
 
     #draw groups
     enemy_group.draw(screen)
-    turret_group.draw(screen)
+    for turret in turret_group:
+        turret.draw(screen)
 
     #draw buttons
     if turret_button.draw(screen):
@@ -111,18 +139,31 @@ while run:
 
         if cancel_button.draw(screen):
             placing_turrets = False
-
+    
+    if selected_turret:
+        if upgrade_turret_button.draw(screen):
+            if selected_turret.upgrade_level < c.TURRET_LEVELS:
+                selected_turret.upgrade()
     
     for event in pg.event.get():
-        if event.type == pg.QUIT:
+        if event.type == pg.QUIT :
             run = False
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                run = False
+                print("ESC QUIT")
         #mouseclick
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pg.mouse.get_pos()
             #check if mouse is on game area
             if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
+                # clear selection with click
+                selected_turret = None
+                clear_selection()
                 if placing_turrets == True:
                     create_turret(mouse_pos)
+                else:
+                    selected_turret = select_turret(mouse_pos)
             
 
 
