@@ -143,7 +143,6 @@ while run:
     if selected_turret:
         if upgrade_turret_button.draw(screen):
             if selected_turret.upgrade_level < c.TURRET_LEVELS:
-                print(selected_turret.upgrade_level)
                 selected_turret.upgrade()
     
     for event in pg.event.get():
